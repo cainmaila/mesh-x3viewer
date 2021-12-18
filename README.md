@@ -1,7 +1,5 @@
-# Vue 3 + Vite
+# Mesh X3 Viewer
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+使用 MRF 檔案輸出 Mesh 數據並使用 Threejs 繪製
 
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+> 這是一個 vite 項目
