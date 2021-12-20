@@ -16,6 +16,7 @@ import {
 
 const models = reactive({
   file: 'car',
+  isLoading: true,
 })
 
 let modelSetting = null
@@ -37,6 +38,7 @@ onMounted(async () => {
 })
 
 function loadMesh(modelMeta) {
+  models.isLoading = true
   return new Promise(async (resolve) => {
     const _response = await loadModel('./' + modelMeta.path)
     const _group = buildTriangleMeshes(
@@ -45,6 +47,7 @@ function loadMesh(modelMeta) {
     )
     changeMesh(_group)
     updateCamera(modelMeta.v4)
+    models.isLoading = false
     resolve()
   })
 }
@@ -80,7 +83,23 @@ gui
 
 <template>
   <div id="MeshView" class="h-full"></div>
-  <!-- <div id="GUI" class="absolute left-0 top-0"></div> -->
+  <div
+    v-if="models.isLoading"
+    id="loading"
+    class="
+      fixed
+      top-0
+      w-full
+      h-full
+      bg-black/50
+      text-white
+      flex
+      justify-center
+      items-center
+    "
+  >
+    Loading...
+  </div>
 </template>
 
 <style lang="postcss" scoped>
