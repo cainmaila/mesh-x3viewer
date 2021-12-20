@@ -11,8 +11,8 @@ import {
   loadModel,
 } from './meshTools.js'
 
-const route = useRoute()
-console.log('route!', route.params)
+// const route = useRoute()
+// console.log('route!', route.params)
 
 const models = reactive({
   file: 'car',
@@ -39,7 +39,10 @@ onMounted(async () => {
 function loadMesh(modelMeta) {
   return new Promise(async (resolve) => {
     const _response = await loadModel('./' + modelMeta.path)
-    const _group = buildTriangleMeshes(decodeTriangleMesh(_response))
+    const _group = buildTriangleMeshes(
+      decodeTriangleMesh(_response),
+      modelMeta.isRotateX,
+    )
     changeMesh(_group)
     updateCamera(modelMeta.v4)
     resolve()
