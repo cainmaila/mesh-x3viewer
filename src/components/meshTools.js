@@ -1,3 +1,52 @@
+import * as THREE from 'three'
+
+const triangleMeshWireframeMaterial = new THREE.MeshBasicMaterial({
+  color: 0x222222,
+})
+const triangleMeshMaterial = new THREE.MeshBasicMaterial({
+  color: 0xf9f9f9,
+  polygonOffset: true,
+  polygonOffsetFactor: 1, // positive value pushes polygon further away
+  polygonOffsetUnits: 1,
+})
+
+/**
+ * 創建物件封裝
+ * @param {*} res
+ * @param {*} isRotateX
+ * @returns
+ */
+export function buildTriangleMeshes(res, isRotateX) {
+  const triangleMeshWireframe = []
+  const triangleMesh = []
+  const group = new THREE.Group()
+  for (var i = 0; i < res.triangleMeshes.length; i++) {
+    let triangleMeshes = res.triangleMeshes[i]
+    const geometry = new THREE.BufferGeometry()
+    const vertices = triangleMeshes.vertex
+    const index = triangleMeshes.index
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
+    geometry.setIndex(index)
+    geometry.computeBoundingBox()
+    let mesh = new THREE.Mesh(geometry, triangleMeshMaterial)
+    let wireframe = mesh.clone()
+    wireframe.material = triangleMeshWireframeMaterial
+    wireframe.material.wireframe = true
+    group.add(wireframe)
+    wireframe.add(mesh)
+    triangleMeshWireframe.push(wireframe)
+    triangleMesh.push(mesh)
+  }
+  var bbox = new THREE.Box3().setFromObject(group)
+  const _center = new THREE.Vector3()
+  bbox.getCenter(_center)
+  isRotateX && group.rotateX(-Math.PI / 2)
+  group.translateX(-_center.x)
+  group.translateY(-_center.y)
+  group.translateZ(-_center.z)
+  return group
+}
+
 /**
  * 解碼檔案
  * @param {*} bin - 檔案

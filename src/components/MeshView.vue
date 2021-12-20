@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { decodeTriangleMesh } from './meshTools.js'
+import { decodeTriangleMesh, buildTriangleMeshes } from './meshTools.js'
 
 // const file = './house2.tri.gz'
 // const v4Meta = [
@@ -10,10 +10,10 @@ import { decodeTriangleMesh } from './meshTools.js'
 //   0.58823526,
 // ]
 
-// const file = './house1.tri.gz'
-// const v4Meta = [
-//   10.000002, 4.165, 17.252731, 10.000002, 4.165, -6.5, 0, 1, 0, 0.58823526,
-// ]
+const file = './house1.tri.gz'
+const v4Meta = [
+  10.000002, 4.165, 17.252731, 10.000002, 4.165, -6.5, 0, 1, 0, 0.58823526,
+]
 
 // const file = './man.tri.gz'
 // const v4Meta = [
@@ -21,27 +21,25 @@ import { decodeTriangleMesh } from './meshTools.js'
 //   0.58823526,
 // ]
 
-const file = './car.tri.gz'
-const v4Meta = [
-  -7.6472816, 0.24464417, 288.56067, -7.6472816, 0.24464417, 1.4371033, 0, 1, 0,
-  0.58823526,
-]
+// const file = './car.tri.gz'
+// const v4Meta = [
+//   -7.6472816, 0.24464417, 288.56067, -7.6472816, 0.24464417, 1.4371033, 0, 1, 0,
+//   0.58823526,
+// ]
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(
-  75,
+  45,
   window.innerWidth / window.innerHeight,
   0.1,
-  1000,
+  10000,
 )
 const renderer = new THREE.WebGLRenderer()
 renderer.setPixelRatio(window.devicePixelRatio)
-renderer.setClearColor(0x888888, 1)
+renderer.setClearColor(0x444444, 1)
 renderer.setSize(window.innerWidth, window.innerHeight)
 updateCamera(v4Meta)
 const controls = new OrbitControls(camera, renderer.domElement)
-
-// camera.position.z = 5
 
 function animate() {
   requestAnimationFrame(animate)
@@ -54,7 +52,8 @@ const xhr = new XMLHttpRequest()
 xhr.onprogress = (e) => console.log('loading..', e.loaded)
 xhr.onloadend = () => {
   console.log('xonloadend...')
-  buildTriangleMeshes(decodeTriangleMesh(xhr.response))
+  const _group = buildTriangleMeshes(decodeTriangleMesh(xhr.response))
+  scene.add(_group)
 }
 xhr.responseType = 'arraybuffer'
 xhr.open('GET', file)
@@ -71,40 +70,6 @@ function updateCamera(status) {
   camera.up.x = status[6]
   camera.up.y = status[7]
   camera.up.z = status[8]
-}
-
-//創建面================================================================
-
-const triangleMeshWireframeMaterial = new THREE.MeshBasicMaterial({
-  color: 0x222222,
-})
-const triangleMeshMaterial = new THREE.MeshBasicMaterial({
-  color: 0xf9f9f9,
-  polygonOffset: true,
-  polygonOffsetFactor: 1, // positive value pushes polygon further away
-  polygonOffsetUnits: 1,
-})
-
-function buildTriangleMeshes(res) {
-  const triangleMeshWireframe = []
-  const triangleMesh = []
-  for (var i = 0; i < res.triangleMeshes.length; i++) {
-    let triangleMeshes = res.triangleMeshes[i]
-    const geometry = new THREE.BufferGeometry()
-    const vertices = triangleMeshes.vertex
-    const index = triangleMeshes.index
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-    geometry.setIndex(index)
-    geometry.computeBoundingBox()
-    let mesh = new THREE.Mesh(geometry, triangleMeshMaterial)
-    let wireframe = mesh.clone()
-    wireframe.material = triangleMeshWireframeMaterial
-    wireframe.material.wireframe = true
-    scene.add(wireframe)
-    wireframe.add(mesh)
-    triangleMeshWireframe.push(wireframe)
-    triangleMesh.push(mesh)
-  }
 }
 </script>
 
