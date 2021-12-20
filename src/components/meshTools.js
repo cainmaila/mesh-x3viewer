@@ -1,5 +1,19 @@
 import * as THREE from 'three'
 
+export function loadModel(_path) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest()
+    xhr.onprogress = (e) => console.log('loading..', e.loaded)
+    xhr.onloadend = () => {
+      console.log('onloadend...')
+      resolve(xhr.response)
+    }
+    xhr.responseType = 'arraybuffer'
+    xhr.open('GET', _path)
+    xhr.send()
+  })
+}
+
 const triangleMeshWireframeMaterial = new THREE.MeshBasicMaterial({
   color: 0x222222,
 })

@@ -5,7 +5,7 @@ import MeshView from './components/MeshView.vue'
 </script>
 
 <template>
-  <MeshView />
+  <router-view />
 </template>
 
 <style>

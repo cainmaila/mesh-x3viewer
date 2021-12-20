@@ -1,66 +1,56 @@
 <script setup>
-import { onMounted } from 'vue'
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { decodeTriangleMesh, buildTriangleMeshes } from './meshTools.js'
+import { onMounted, reactive, watch } from 'vue'
+import axios from 'axios'
+import { useRoute } from 'vue-router'
+// import * as THREE from 'three'
+import dat from 'dat.gui'
+import buildRenderer from './renderer.js'
+import {
+  decodeTriangleMesh,
+  buildTriangleMeshes,
+  loadModel,
+} from './meshTools.js'
 
-// const file = './house2.tri.gz'
-// const v4Meta = [
-//   140.60497, -1150.8385, 17.481358, 140.60497, -0.5007324, 17.481358, 0, 0, 1,
-//   0.58823526,
-// ]
+const route = useRoute()
+console.log('route!', route.params)
 
-const file = './house1.tri.gz'
-const v4Meta = [
-  10.000002, 4.165, 17.252731, 10.000002, 4.165, -6.5, 0, 1, 0, 0.58823526,
-]
-
-// const file = './man.tri.gz'
-// const v4Meta = [
-//   0.30215168, 0.95275545, 47.369423, 0.30215168, 0.95275545, 19.701006, 0, 1, 0,
-//   0.58823526,
-// ]
-
-// const file = './car.tri.gz'
-// const v4Meta = [
-//   -7.6472816, 0.24464417, 288.56067, -7.6472816, 0.24464417, 1.4371033, 0, 1, 0,
-//   0.58823526,
-// ]
-
-const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  10000,
-)
-const renderer = new THREE.WebGLRenderer()
-renderer.setPixelRatio(window.devicePixelRatio)
-renderer.setClearColor(0x444444, 1)
-renderer.setSize(window.innerWidth, window.innerHeight)
-updateCamera(v4Meta)
-const controls = new OrbitControls(camera, renderer.domElement)
-
-function animate() {
-  requestAnimationFrame(animate)
-  controls.update()
-  renderer.render(scene, camera)
-}
-animate()
-
-const xhr = new XMLHttpRequest()
-xhr.onprogress = (e) => console.log('loading..', e.loaded)
-xhr.onloadend = () => {
-  console.log('xonloadend...')
-  const _group = buildTriangleMeshes(decodeTriangleMesh(xhr.response))
-  scene.add(_group)
-}
-xhr.responseType = 'arraybuffer'
-xhr.open('GET', file)
-xhr.send()
-onMounted(() => {
-  document.getElementById('MeshView').appendChild(renderer.domElement)
+const models = reactive({
+  file: 'car',
 })
+
+let modelSetting = null
+let modelMesh = null
+const { scene, camera, renderer } = buildRenderer()
+
+watch(
+  () => models.file,
+  async (file) => {
+    await loadMesh(modelSetting[file])
+  },
+)
+
+onMounted(async () => {
+  document.getElementById('MeshView').appendChild(renderer.domElement)
+  const { data } = await axios.get('./model.json')
+  modelSetting = data
+  await loadMesh(modelSetting[models.file])
+})
+
+function loadMesh(modelMeta) {
+  return new Promise(async (resolve) => {
+    const _response = await loadModel('./' + modelMeta.path)
+    const _group = buildTriangleMeshes(decodeTriangleMesh(_response))
+    changeMesh(_group)
+    updateCamera(modelMeta.v4)
+    resolve()
+  })
+}
+
+function changeMesh(mesh) {
+  modelMesh && scene.remove(modelMesh)
+  modelMesh = mesh
+  modelMesh && scene.add(modelMesh)
+}
 
 function updateCamera(status) {
   camera.position.x = status[0]
@@ -71,10 +61,23 @@ function updateCamera(status) {
   camera.up.y = status[7]
   camera.up.z = status[8]
 }
+const gui = new dat.GUI({
+  name: 'Mesh',
+})
+gui
+  .add(models, 'file', {
+    車: 'car',
+    雕像: 'man',
+    house1: 'house1',
+    house2: 'house2',
+    飛機: 'airplane',
+  })
+  .name('模型')
 </script>
 
 <template>
   <div id="MeshView" class="h-full"></div>
+  <!-- <div id="GUI" class="absolute left-0 top-0"></div> -->
 </template>
 
 <style lang="postcss" scoped>
