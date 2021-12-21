@@ -13,7 +13,7 @@
         },
         {
           "key": "Accept-Encoding",
-          "value": "gzip"
+          "value": "identity"
         }
       ]
     }
