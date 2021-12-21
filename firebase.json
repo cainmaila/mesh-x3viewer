@@ -5,11 +5,15 @@
   },
   "headers": [
     {
-      "source": "**/*.@(eot|otf|ttf|ttc|woff|font.css|gz)",
+      "source": "**/*.@(gz)",
       "headers": [
         {
-          "key": "Access-Control-Allow-Origin",
+          "key": "access-control-allow-origin",
           "value": "*"
+        },
+        {
+          "key": "content-encoding",
+          "value": "gzip"
         }
       ]
     }
