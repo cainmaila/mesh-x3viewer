@@ -8,12 +8,8 @@
       "source": "**/*.@(gz)",
       "headers": [
         {
-          "key": "access-control-allow-origin",
+          "key": "Access-Control-Allow-Origin",
           "value": "*"
-        },
-        {
-          "key": "content-encoding",
-          "value": "gzip"
         }
       ]
     }
