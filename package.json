@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "dat.gui": "^0.7.7",
+    "firebase": "^9.6.1",
     "three": "^0.135.0",
     "vue": "^3.2.25",
     "vue-router": "4"

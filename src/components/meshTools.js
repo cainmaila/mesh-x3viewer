@@ -3,7 +3,6 @@ import * as THREE from 'three'
 export function loadModel(_path) {
   return new Promise((resolve) => {
     const xhr = new XMLHttpRequest()
-    xhr.responseType = 'blob'
     xhr.onprogress = (e) => console.log('loading..', e.loaded)
     xhr.onloadend = () => {
       console.log('onloadend...')
