@@ -8,6 +8,7 @@ import {
   decodeTriangleMesh,
   buildTriangleMeshes,
   loadModel,
+  updateMeshForExplod,
 } from './meshTools.js'
 
 // const route = useRoute()
@@ -18,16 +19,10 @@ const models = reactive({
   isLoading: true,
 })
 const bitsRef = ref(0)
+const explodRef = ref(0)
 let modelSetting = null
 let modelMesh = null
 const { scene, camera, renderer } = buildRenderer()
-
-watch(
-  () => models.file,
-  async (file) => {
-    await loadMesh(modelSetting[file])
-  },
-)
 
 onMounted(async () => {
   document.getElementById('MeshView').appendChild(renderer.domElement)
@@ -79,6 +74,20 @@ gui
     飛機: 'airplane',
   })
   .name('模型')
+const explodUi = gui.add(explodRef, 'value', 0, 2).name('爆炸')
+
+watch(
+  () => models.file,
+  async (file) => {
+    explodRef.value = 0
+    explodUi.setValue(0)
+    await loadMesh(modelSetting[file])
+  },
+)
+
+watch(explodRef, (val) => {
+  updateMeshForExplod(val)
+})
 </script>
 
 <template>

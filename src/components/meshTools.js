@@ -25,6 +25,9 @@ const triangleMeshMaterial = new THREE.MeshBasicMaterial({
   polygonOffsetUnits: 1,
 })
 
+const triangleMeshWireframe = []
+let _center = null
+
 /**
  * 創建物件封裝
  * @param {*} res
@@ -32,7 +35,7 @@ const triangleMeshMaterial = new THREE.MeshBasicMaterial({
  * @returns
  */
 export function buildTriangleMeshes(res, isRotateX) {
-  const triangleMeshWireframe = []
+  triangleMeshWireframe.length = 0
   const triangleMesh = []
   const group = new THREE.Group()
   for (var i = 0; i < res.triangleMeshes.length; i++) {
@@ -53,13 +56,39 @@ export function buildTriangleMeshes(res, isRotateX) {
     triangleMesh.push(mesh)
   }
   var bbox = new THREE.Box3().setFromObject(group)
-  const _center = new THREE.Vector3()
+  _center = new THREE.Vector3()
   bbox.getCenter(_center)
   isRotateX && group.rotateX(-Math.PI / 2)
   group.translateX(-_center.x)
   group.translateY(-_center.y)
   group.translateZ(-_center.z)
   return group
+}
+
+export function updateMeshForExplod(explodOffset) {
+  if (
+    triangleMeshWireframe != null &&
+    triangleMeshWireframe != undefined &&
+    triangleMeshWireframe.length > 1
+  ) {
+    // var sceneCenter = _center
+    const pos = new THREE.Vector3()
+    for (let i = 0; i < triangleMeshWireframe.length; i++) {
+      // triangleMeshWireframe[i].position.x =
+      //   triangleMeshWireframe[i].position.x + 5
+      if (triangleMeshWireframe[i].children.length > 0) {
+        let obj = triangleMeshWireframe[i].children[0]
+        let bbox = obj.geometry.boundingBox
+        bbox.getCenter(pos)
+        // let sub = _center.sub(pos)
+        let sub = pos
+        // let sub = obj.geometry.boundingBox.getCenter(pos)
+        triangleMeshWireframe[i].position.x = sub.x * explodOffset
+        triangleMeshWireframe[i].position.y = sub.y * explodOffset
+        triangleMeshWireframe[i].position.z = sub.z * explodOffset
+      }
+    }
+  }
 }
 
 /**
