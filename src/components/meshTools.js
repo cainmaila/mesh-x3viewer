@@ -1,9 +1,11 @@
 import * as THREE from 'three'
 
-export function loadModel(_path) {
+export function loadModel(_path, bitsRef) {
   return new Promise((resolve) => {
     const xhr = new XMLHttpRequest()
-    xhr.onprogress = (e) => console.log('loading..', e.loaded)
+    xhr.onprogress = (e) => {
+      bitsRef && (bitsRef.value = e.loaded)
+    }
     xhr.onloadend = () => {
       resolve(xhr.response)
     }

@@ -13,12 +13,20 @@ function buildRenderer() {
   renderer.setClearColor(0x444444, 1)
   renderer.setSize(window.innerWidth, window.innerHeight)
   const controls = new OrbitControls(camera, renderer.domElement)
+  // const light = new THREE.AmbientLight(0xffffff, 1) // soft white light
+  // scene.add(light)
   function animate() {
     requestAnimationFrame(animate)
     controls.update()
     renderer.render(scene, camera)
   }
   animate()
+  window.addEventListener('resize', onWindowResize)
+  function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+    renderer.setSize(window.innerWidth, window.innerHeight)
+  }
   return {
     scene,
     camera,

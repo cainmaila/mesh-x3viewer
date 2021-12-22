@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, watch } from 'vue'
+import { onMounted, reactive, watch, ref } from 'vue'
 import axios from 'axios'
 // import { useRoute } from 'vue-router'
 import dat from 'dat.gui'
@@ -17,7 +17,7 @@ const models = reactive({
   file: 'car',
   isLoading: true,
 })
-
+const bitsRef = ref(0)
 let modelSetting = null
 let modelMesh = null
 const { scene, camera, renderer } = buildRenderer()
@@ -38,8 +38,9 @@ onMounted(async () => {
 
 function loadMesh(modelMeta) {
   models.isLoading = true
+  bitsRef.value = 0
   return new Promise(async (resolve) => {
-    const _response = await loadModel('./' + modelMeta.path)
+    const _response = await loadModel('./' + modelMeta.path, bitsRef)
     const _group = buildTriangleMeshes(
       decodeTriangleMesh(_response),
       modelMeta.isRotateX,
@@ -97,7 +98,7 @@ gui
       items-center
     "
   >
-    Loading...
+    Loading... {{ bitsRef }}
   </div>
 </template>
 
