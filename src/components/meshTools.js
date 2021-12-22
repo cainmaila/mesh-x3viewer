@@ -74,15 +74,13 @@ export function updateMeshForExplod(explodOffset) {
     // var sceneCenter = _center
     const pos = new THREE.Vector3()
     for (let i = 0; i < triangleMeshWireframe.length; i++) {
-      // triangleMeshWireframe[i].position.x =
-      //   triangleMeshWireframe[i].position.x + 5
       if (triangleMeshWireframe[i].children.length > 0) {
         let obj = triangleMeshWireframe[i].children[0]
-        let bbox = obj.geometry.boundingBox
-        bbox.getCenter(pos)
+        // let bbox = obj.geometry.boundingBox
+        // bbox.getCenter(pos)
         // let sub = _center.sub(pos)
-        let sub = pos
-        // let sub = obj.geometry.boundingBox.getCenter(pos)
+        // let sub = pos
+        let sub = obj.geometry.boundingBox.getCenter(pos)
         triangleMeshWireframe[i].position.x = sub.x * explodOffset
         triangleMeshWireframe[i].position.y = sub.y * explodOffset
         triangleMeshWireframe[i].position.z = sub.z * explodOffset
