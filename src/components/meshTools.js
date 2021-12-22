@@ -1,15 +1,10 @@
 import * as THREE from 'three'
-// import decompress from 'brotli/decompress'
 
 export function loadModel(_path) {
   return new Promise((resolve) => {
     const xhr = new XMLHttpRequest()
     xhr.onprogress = (e) => console.log('loading..', e.loaded)
     xhr.onloadend = () => {
-      console.log('onloadend...', xhr.getResponseHeader('Content-Encoding'))
-      // if (xhr.getResponseHeader('Content-Encoding') === 'br') {
-      //   console.log('brotli.decompress=', decompress(xhr.response))
-      // }
       resolve(xhr.response)
     }
     xhr.responseType = 'arraybuffer'

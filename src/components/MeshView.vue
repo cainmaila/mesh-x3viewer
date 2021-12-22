@@ -1,8 +1,7 @@
 <script setup>
 import { onMounted, reactive, watch } from 'vue'
 import axios from 'axios'
-import { useRoute } from 'vue-router'
-// import * as THREE from 'three'
+// import { useRoute } from 'vue-router'
 import dat from 'dat.gui'
 import buildRenderer from './renderer.js'
 import {
