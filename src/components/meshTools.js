@@ -23,7 +23,13 @@ const triangleMeshMaterial = new THREE.MeshBasicMaterial({
   polygonOffset: true,
   polygonOffsetFactor: 1, // positive value pushes polygon further away
   polygonOffsetUnits: 1,
+  transparent: true,
+  opacity: 1,
 })
+
+export const setMaterialOpacity = (val) => {
+  triangleMeshMaterial.opacity = val
+}
 
 const triangleMeshWireframe = []
 let _center = null

@@ -10,6 +10,7 @@ import {
   buildTriangleMeshes,
   loadModel,
   updateMeshForExplod,
+  setMaterialOpacity,
 } from './meshTools.js'
 
 // const route = useRoute()
@@ -21,6 +22,7 @@ const models = reactive({
 })
 const bitsRef = ref(0)
 const explodRef = ref(0)
+const opacityRef = ref(1)
 let modelSetting = null
 let modelMesh = null
 const { scene, camera, renderer, controls } = buildRenderer()
@@ -77,7 +79,8 @@ gui
     飛機: 'airplane',
   })
   .name('模型')
-const explodUi = gui.add(explodRef, 'value', 0, 2).name('爆炸')
+const opacityUi = gui.add(opacityRef, 'value', 0.3, 1.0).name('opacity')
+const explodUi = gui.add(explodRef, 'value', 0.0, 2.0).name('爆炸')
 
 watch(
   () => models.file,
@@ -90,6 +93,9 @@ watch(
 
 watch(explodRef, (val) => {
   updateMeshForExplod(val)
+})
+watch(opacityRef, (val) => {
+  setMaterialOpacity(val)
 })
 </script>
 
