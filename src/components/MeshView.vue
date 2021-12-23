@@ -19,22 +19,26 @@ import {
 const models = reactive({
   file: 'house1',
   isLoading: true,
+  infoNodeMode: false,
 })
 const bitsRef = ref(0)
 const explodRef = ref(0)
 const opacityRef = ref(0.7)
 let modelSetting = null
 let modelMesh = null
+let infoNodeGroup
 const { scene, camera, renderer, controls } = buildRenderer()
 
 onMounted(async () => {
   document.getElementById('MeshView').appendChild(renderer.domElement)
   const { data } = await axios.get('./model.json')
   modelSetting = data
+
   await loadMesh(modelSetting[models.file])
 })
 const zeroPoint = new THREE.Vector3()
 function loadMesh(modelMeta) {
+  infoNodeGroup && scene.remove(infoNodeGroup)
   models.isLoading = true
   bitsRef.value = 0
   return new Promise(async (resolve) => {
@@ -47,6 +51,8 @@ function loadMesh(modelMeta) {
     updateCamera(modelMeta.v4)
     controls.target = zeroPoint
     models.isLoading = false
+    infoNodeGroup = new THREE.Group()
+    scene.add(infoNodeGroup)
     resolve()
   })
 }
@@ -67,6 +73,39 @@ function updateCamera(status) {
   camera.up.y = status[7]
   camera.up.z = status[8]
 }
+
+watch(
+  () => models.infoNodeMode,
+  (val) => {
+    val
+      ? window.addEventListener('pointerup', onPointerup, false)
+      : window.removeEventListener('pointerup', onPointerup)
+  },
+)
+
+function onPointerup(event) {
+  models.infoNodeMode = false
+  const raycaster = new THREE.Raycaster()
+  const mouse = new THREE.Vector2()
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+  raycaster.setFromCamera(mouse, camera)
+  const intersects = raycaster.intersectObjects(scene.children)
+  let _intersect, _position
+  if (intersects && intersects.length > 0) {
+    _intersect = intersects[0]
+    _position = _intersect.point
+    const map = new THREE.TextureLoader().load('placeholder.png')
+    const material = new THREE.SpriteMaterial({ map: map })
+    material.sizeAttenuation = false
+    const sprite = new THREE.Sprite(material)
+    sprite.scale.set(0.05, 0.05, 1)
+    sprite.center.y = 0
+    sprite.position.set(_position.x, _position.y, _position.z)
+    infoNodeGroup.add(sprite)
+  }
+}
+
 const gui = new dat.GUI({
   name: 'Mesh',
 })
@@ -79,8 +118,18 @@ gui
     飛機: 'airplane',
   })
   .name('模型')
-const opacityUi = gui.add(opacityRef, 'value', 0.3, 1.0).name('opacity')
+gui.add(opacityRef, 'value', 0.3, 1.0).name('opacity')
 const explodUi = gui.add(explodRef, 'value', 0.0, 2.0).name('爆炸')
+gui
+  .add(
+    {
+      add() {
+        models.infoNodeMode = true
+      },
+    },
+    'add',
+  )
+  .name('按我新增資訊位置')
 
 watch(
   () => models.file,
@@ -101,6 +150,14 @@ watch(opacityRef, (val) => {
 
 <template>
   <div id="MeshView" class="h-full"></div>
+  <div
+    class="fixed top-0 w-full h-full flex justify-center items-center"
+    v-if="models.infoNodeMode"
+  >
+    <div class="flex justify-center items-center bg-white/50 rounded-sm p-3">
+      請點選要新增的位置
+    </div>
+  </div>
   <div
     v-if="models.isLoading"
     id="loading"

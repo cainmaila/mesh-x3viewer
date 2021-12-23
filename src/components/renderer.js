@@ -15,6 +15,7 @@ function buildRenderer() {
   const controls = new OrbitControls(camera, renderer.domElement)
   // const light = new THREE.AmbientLight(0xffffff, 1) // soft white light
   // scene.add(light)
+
   function animate() {
     requestAnimationFrame(animate)
     controls.update()
