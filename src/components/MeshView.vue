@@ -154,7 +154,17 @@ watch(opacityRef, (val) => {
     class="fixed top-0 w-full h-full flex justify-center items-center"
     v-if="models.infoNodeMode"
   >
-    <div class="flex justify-center items-center bg-white/50 rounded-sm p-3">
+    <div
+      class="
+        flex
+        justify-center
+        items-center
+        bg-black/60
+        text-white
+        rounded-sm
+        p-3
+      "
+    >
       請點選要新增的位置
     </div>
   </div>
