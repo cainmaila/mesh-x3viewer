@@ -24,7 +24,7 @@ const triangleMeshMaterial = new THREE.MeshBasicMaterial({
   polygonOffsetFactor: 1, // positive value pushes polygon further away
   polygonOffsetUnits: 1,
   transparent: true,
-  opacity: 1,
+  opacity: 0.7,
 })
 
 export const setMaterialOpacity = (val) => {

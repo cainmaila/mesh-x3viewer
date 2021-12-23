@@ -17,12 +17,12 @@ import {
 // console.log('route!', route.params)
 
 const models = reactive({
-  file: 'car',
+  file: 'house1',
   isLoading: true,
 })
 const bitsRef = ref(0)
 const explodRef = ref(0)
-const opacityRef = ref(1)
+const opacityRef = ref(0.7)
 let modelSetting = null
 let modelMesh = null
 const { scene, camera, renderer, controls } = buildRenderer()
