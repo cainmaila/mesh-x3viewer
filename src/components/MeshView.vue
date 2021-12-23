@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, watch, ref } from 'vue'
 import axios from 'axios'
+import * as THREE from 'three'
 // import { useRoute } from 'vue-router'
 import dat from 'dat.gui'
 import buildRenderer from './renderer.js'
@@ -22,7 +23,7 @@ const bitsRef = ref(0)
 const explodRef = ref(0)
 let modelSetting = null
 let modelMesh = null
-const { scene, camera, renderer } = buildRenderer()
+const { scene, camera, renderer, controls } = buildRenderer()
 
 onMounted(async () => {
   document.getElementById('MeshView').appendChild(renderer.domElement)
@@ -30,7 +31,7 @@ onMounted(async () => {
   modelSetting = data
   await loadMesh(modelSetting[models.file])
 })
-
+const zeroPoint = new THREE.Vector3()
 function loadMesh(modelMeta) {
   models.isLoading = true
   bitsRef.value = 0
@@ -42,6 +43,7 @@ function loadMesh(modelMeta) {
     )
     changeMesh(_group)
     updateCamera(modelMeta.v4)
+    controls.target = zeroPoint
     models.isLoading = false
     resolve()
   })
@@ -57,7 +59,8 @@ function updateCamera(status) {
   camera.position.x = status[0]
   camera.position.y = status[1]
   camera.position.z = status[2]
-  camera.lookAt(status[3], status[4], status[5])
+  // camera.lookAt(status[3], status[4], status[5])
+  camera.lookAt(0, 0, 0)
   camera.up.x = status[6]
   camera.up.y = status[7]
   camera.up.z = status[8]
