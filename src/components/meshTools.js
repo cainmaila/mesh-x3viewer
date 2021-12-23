@@ -76,11 +76,11 @@ export function updateMeshForExplod(explodOffset) {
     for (let i = 0; i < triangleMeshWireframe.length; i++) {
       if (triangleMeshWireframe[i].children.length > 0) {
         let obj = triangleMeshWireframe[i].children[0]
-        // let bbox = obj.geometry.boundingBox
-        // bbox.getCenter(pos)
-        // let sub = _center.sub(pos)
+        let bbox = obj.geometry.boundingBox
+        bbox.getCenter(pos)
+        let sub = pos.sub(_center)
         // let sub = pos
-        let sub = obj.geometry.boundingBox.getCenter(pos)
+        // let sub = obj.geometry.boundingBox.getCenter(pos)
         triangleMeshWireframe[i].position.x = sub.x * explodOffset
         triangleMeshWireframe[i].position.y = sub.y * explodOffset
         triangleMeshWireframe[i].position.z = sub.z * explodOffset
