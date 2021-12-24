@@ -82,7 +82,8 @@ watch(
       : window.removeEventListener('pointerup', onPointerup)
   },
 )
-
+const map = new THREE.TextureLoader().load('placeholder.png')
+const material = new THREE.SpriteMaterial({ map: map })
 function onPointerup(event) {
   models.infoNodeMode = false
   const raycaster = new THREE.Raycaster()
@@ -95,8 +96,6 @@ function onPointerup(event) {
   if (intersects && intersects.length > 0) {
     _intersect = intersects[0]
     _position = _intersect.point
-    const map = new THREE.TextureLoader().load('placeholder.png')
-    const material = new THREE.SpriteMaterial({ map: map })
     material.sizeAttenuation = false
     const sprite = new THREE.Sprite(material)
     sprite.scale.set(0.05, 0.05, 1)
