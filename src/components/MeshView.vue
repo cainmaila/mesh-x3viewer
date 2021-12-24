@@ -101,6 +101,7 @@ function onPointerup(event) {
     sprite.scale.set(0.05, 0.05, 1)
     sprite.center.y = 0
     sprite.position.set(_position.x, _position.y, _position.z)
+    sprite.renderOrder = 9999
     infoNodeGroup.add(sprite)
   }
 }
